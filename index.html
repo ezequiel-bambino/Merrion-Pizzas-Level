@@ -44,7 +44,7 @@ body{
 }
 
 .left{
-  max-width:400px;
+  max-width:500px; /* más espacio para 2 inputs */
   margin:0 auto;
 }
 
@@ -59,11 +59,11 @@ body{
   display:inline-block;
   min-width:150px;
   text-align:left;
-  font-size:20px;
+  font-size:20px; /* mismo tamaño que Stock Form */
 }
 
 .row input, .row select{
-  width:80px;
+  width:60px;
   font-size:20px;
   text-align:center; 
 }
@@ -92,7 +92,7 @@ button{
   margin-top:10px;
 }
 
-/* Last Drop: usamos grid para alinear columnas como tabla */
+/* Last Drop: grid tipo tabla, centrado */
 #dropData{
   display:grid;
   grid-template-columns: auto 60px; /* pizza | qty */
@@ -104,7 +104,7 @@ button{
 
 #dropData .header{
   font-weight:bold;
-  font-size:20px;
+  font-size:20px; /* mismo tamaño que Stock Form */
 }
 
 #dropData .cell{
@@ -156,7 +156,14 @@ button{
 
 <h3 style="text-align:center;">Stock Info</h3>
 
-<div id="stockForm"></div>
+<div id="stockForm">
+  <!-- headers -->
+  <div class="row bold">
+    <span>Pizza</span>
+    <span>Whole pies</span>
+    <span>Slices</span>
+  </div>
+</div>
 
 <button id="submitStockBtn" onclick="submitStock()">Submit Stock</button>
 <button id="newBtn" class="hidden" onclick="resetForm()">New Submit</button>
@@ -213,22 +220,27 @@ async function loadPizzas(){
   const pizzas = await res.json();
 
   const formDiv = document.getElementById("stockForm");
-  formDiv.innerHTML = ""; // limpio
+  // eliminar filas existentes excepto headers
+  formDiv.querySelectorAll(".row:not(.bold)").forEach(r => r.remove());
 
   pizzas.forEach(p=>{
     formDiv.innerHTML += `
       <div class="row">
         <span class="bold">${p}</span>
-        <input id="stock_${p}" type="number">
+        <input id="stock_${p}_whole" type="number" placeholder="0">
+        <input id="stock_${p}_slice" type="number" placeholder="0">
       </div>
     `;
   });
 
+  // restaurar datos guardados
   const saved = JSON.parse(localStorage.getItem("lastStockSubmit") || "{}");
   if(saved.pizzas){
     saved.pizzas.forEach(p=>{
-      const el = document.getElementById("stock_" + p.name);
-      if(el) el.value = p.qty;
+      const elWhole = document.getElementById("stock_" + p.name + "_whole");
+      const elSlice = document.getElementById("stock_" + p.name + "_slice");
+      if(elWhole) elWhole.value = Math.floor(p.qty);
+      if(elSlice) elSlice.value = Math.round((p.qty - Math.floor(p.qty)) * 0.8);
     });
     if(saved.user) document.getElementById("stockUser").value = saved.user;
     if(saved.weather) document.getElementById("weather").value = saved.weather;
@@ -236,19 +248,21 @@ async function loadPizzas(){
     if(saved.timestamp) showLastUpdate(saved.timestamp);
     document.getElementById("newBtn").classList.remove("hidden");
 
-    // bloqueamos inputs y botón submit
+    // bloquear inputs y botón submit
     document.getElementById("stockUser").disabled = true;
     document.getElementById("weather").disabled = true;
     document.getElementById("traffic").disabled = true;
     pizzas.forEach(p=>{
-      const el = document.getElementById("stock_" + p);
-      if(el) el.disabled = true;
+      const elWhole = document.getElementById("stock_" + p + "_whole");
+      const elSlice = document.getElementById("stock_" + p + "_slice");
+      if(elWhole) elWhole.disabled = true;
+      if(elSlice) elSlice.disabled = true;
     });
     document.getElementById("submitStockBtn").disabled = true;
   }
 }
 
-/* RESET: limpiar formulario sin recargar toda la app */
+/* RESET */
 function resetForm(){
   document.getElementById("stockUser").value = "";
   document.getElementById("weather").value = "";
@@ -298,11 +312,13 @@ async function submitStock(){
   const traffic = document.getElementById("traffic").value;
 
   const pizzas=[];
-  document.querySelectorAll("[id^=stock_]").forEach(i=>{
-    pizzas.push({
-      name: i.id.replace("stock_",""),
-      qty: Number(i.value)||0
-    });
+  document.querySelectorAll("[id^=stock_][id$=_whole]").forEach(i=>{
+    const name = i.id.replace("_whole","");
+    const whole = Number(i.value)||0;
+    const sliceInput = document.getElementById("stock_" + name + "_slice");
+    const slices = Number(sliceInput.value)||0;
+    const qty = whole + slices / 0.8; // combinamos
+    pizzas.push({name, qty});
   });
 
   const res = await fetch(`${URL}?action=submitStock&data=${encodeURIComponent(JSON.stringify({
@@ -313,7 +329,7 @@ async function submitStock(){
 
   alert("Submitted");
 
-  // Guardamos en localStorage
+  // Guardar en localStorage
   localStorage.setItem("lastStockSubmit", JSON.stringify({
     user, weather, traffic, pizzas, timestamp: data.timestamp
   }));
@@ -321,13 +337,15 @@ async function submitStock(){
   showLastUpdate(data.timestamp);
   document.getElementById("newBtn").classList.remove("hidden");
 
-  // BLOQUEAR inputs y botón submit
+  // bloquear inputs y botón submit
   document.getElementById("stockUser").disabled = true;
   document.getElementById("weather").disabled = true;
   document.getElementById("traffic").disabled = true;
   pizzas.forEach(p=>{
-    const el = document.getElementById("stock_" + p.name);
-    if(el) el.disabled = true;
+    const elWhole = document.getElementById("stock_" + p.name + "_whole");
+    const elSlice = document.getElementById("stock_" + p.name + "_slice");
+    if(elWhole) elWhole.disabled = true;
+    if(elSlice) elSlice.disabled = true;
   });
   document.getElementById("submitStockBtn").disabled = true;
 }
