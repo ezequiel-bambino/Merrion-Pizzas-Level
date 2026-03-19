@@ -13,13 +13,15 @@ body{
 }
 
 .logo{
-  width:140px;
+  width:200px;
   margin:auto;
   display:block;
+  margin-bottom:10px;
 }
 
 .title{
   font-size:28px; 
+  font-weight:bold;
   margin-top:10px;
 }
 
@@ -50,7 +52,7 @@ body{
 
 .row{
   display:flex;
-  justify-content:space-between;
+  justify-content:flex-start; /* alineamos columnas desde la izquierda */
   align-items:center;
   margin:8px 0;
 }
@@ -61,18 +63,20 @@ body{
   font-size:20px; 
 }
 
-.row input, .row select{
-  width:60px; /* casi cuadrados */
+/* columnas de inputs */
+.row input{
+  width:60px;
   font-size:20px;
-  text-align:center; 
+  text-align:center;
 }
 
 .row input.whole{
-  text-align:right; /* Whole pies alineados a la derecha */
+  margin-right:10px; /* más cerca de slices */
+  text-align:right;
 }
 
 .row input.slice{
-  text-align:center;
+  text-align:left;
 }
 
 .bigInput{
@@ -115,7 +119,7 @@ button{
 
 #dropData .header{
   font-weight:bold;
-  font-size:22px; /* más grande que antes */
+  font-size:22px; 
 }
 
 #dropData .cell{
@@ -251,7 +255,7 @@ async function loadPizzas(){
   if(saved.pizzas){
     saved.pizzas.forEach(p=>{
       const whole = Math.floor(p.qty);
-      const slice = Math.round((p.qty - whole) * 0.8*10)/10; // reconstruimos slice
+      const slice = Math.round((p.qty - whole) * 0.8*10)/10;
       const elWhole = document.getElementById("whole_" + p.name);
       const elSlice = document.getElementById("slice_" + p.name);
       if(elWhole) elWhole.value = whole;
@@ -263,7 +267,6 @@ async function loadPizzas(){
     if(saved.timestamp) showLastUpdate(saved.timestamp);
     document.getElementById("newBtn").classList.remove("hidden");
 
-    // BLOQUEAR inputs y botón submit
     document.getElementById("stockUser").disabled = true;
     document.getElementById("weather").disabled = true;
     document.getElementById("traffic").disabled = true;
@@ -349,7 +352,6 @@ async function submitStock(){
 
   alert("Submitted");
 
-  // Guardamos en localStorage
   localStorage.setItem("lastStockSubmit", JSON.stringify({
     user, weather, traffic, pizzas, timestamp: data.timestamp
   }));
@@ -357,7 +359,6 @@ async function submitStock(){
   showLastUpdate(data.timestamp);
   document.getElementById("newBtn").classList.remove("hidden");
 
-  // BLOQUEAR inputs y botón submit
   document.getElementById("stockUser").disabled = true;
   document.getElementById("weather").disabled = true;
   document.getElementById("traffic").disabled = true;
