@@ -12,7 +12,6 @@ body{
   padding:20px;
 }
 
-/* LOGO */
 .logo{
   width:200px;
   margin:auto;
@@ -20,7 +19,6 @@ body{
   margin-bottom:10px;
 }
 
-/* TITLE */
 .title{
   font-size:28px; 
   font-weight:bold;
@@ -52,51 +50,49 @@ body{
   margin:0 auto;
 }
 
-/* WEATHER + TRAFFIC MÁS ESPACIADO */
+/* MÁS ESPACIO ENTRE ROWS SUPERIORES */
 .row{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  margin:20px 0; /* MÁS espacio entre renglones */
+  margin:16px 0;
 }
 
-/* DROPDOWNS MÁS CORTOS Y CENTRADOS */
+/* DROPDOWNS AJUSTADOS */
 .row select{
-  width:300px; /* mitad de antes */
+  width:300px; /* mitad de 600 */
   font-size:20px;
+  display:block;
+  margin:0 auto;
   text-align:center;
+  text-align-last:center;
 }
 
-.row select option{
-  text-align:center;
-}
-
-/* STOCK INFO GRID */
+/* STOCK GRID */
 #stockForm{
   display:grid;
-  grid-template-columns: 1fr 100px 100px; /* más compactos */
+  grid-template-columns: 1fr 100px 100px;
   gap:12px 20px;
   align-items:center;
-  margin-top:10px;
 }
 
-#stockForm span{
+#stockForm span.bold{
   text-align:left;
   font-size:20px;
+}
+
+#stockForm input.whole, 
+#stockForm input.slice{
+  font-size:20px;
+  padding:6px;
+  width:80px; /* más cortos */
+  text-align:center; /* centrado */
+  box-sizing:border-box;
+  margin:auto;
 }
 
 #stockForm .header{
   font-weight:bold;
   font-size:22px;
-}
-
-/* INPUTS MÁS CORTOS Y CENTRADOS */
-#stockForm input{
-  font-size:20px;
-  padding:6px;
-  width:100%;
-  text-align:center; /* CENTRADO */
-  box-sizing:border-box;
+  text-align:left;
+  padding-bottom:6px;
 }
 
 .bigInput{
@@ -115,11 +111,15 @@ button{
   display:none;
 }
 
+.bold{
+  font-weight:bold;
+}
+
 #lastUpdate{
   margin-top:10px;
 }
 
-/* LAST DROP */
+/* Last Drop */
 #dropData{
   display:grid;
   grid-template-columns: auto 60px;
@@ -140,6 +140,7 @@ button{
 }
 #dropData .cell.qty{
   text-align:right;
+  font-size:20px;
 }
 </style>
 </head>
@@ -163,7 +164,7 @@ button{
 
 <div class="row">
   <span>Weather Forecast</span>
-  <select id="weather" required>
+  <select id="weather">
     <option value=""></option>
     <option>Sunny</option>
     <option>Cloudy</option>
@@ -174,7 +175,7 @@ button{
 
 <div class="row">
   <span>How's today going?</span>
-  <select id="traffic" required>
+  <select id="traffic">
     <option value=""></option>
     <option>Quiet</option>
     <option>Normal</option>
@@ -182,7 +183,7 @@ button{
   </select>
 </div>
 
-<h3>Stock Info</h3>
+<h3 style="text-align:center;">Stock Info</h3>
 
 <div id="stockForm"></div>
 
@@ -216,7 +217,7 @@ function setDate(){
     });
 }
 
-/* TAB */
+/* TAB CONTROL */
 function showTab(tab){
   document.querySelectorAll(".section")
     .forEach(s => s.classList.remove("active"));
@@ -241,7 +242,9 @@ async function loadPizzas(){
   const pizzas = await res.json();
 
   const formDiv = document.getElementById("stockForm");
-  formDiv.innerHTML = `
+  formDiv.innerHTML = "";
+
+  formDiv.innerHTML += `
     <span class="header">Pizza</span>
     <span class="header">Whole pies</span>
     <span class="header">Slices</span>
@@ -249,39 +252,58 @@ async function loadPizzas(){
 
   pizzas.forEach(p=>{
     formDiv.innerHTML += `
-      <span><b>${p}</b></span>
-      <input id="whole_${p}" type="number" min="0">
-      <input id="slice_${p}" type="number" min="0">
+      <span class="bold">${p}</span>
+      <input id="whole_${p}" class="whole" type="number" min="0">
+      <input id="slice_${p}" class="slice" type="number" min="0" step="1">
     `;
   });
+
+  const saved = JSON.parse(localStorage.getItem("lastStockSubmit") || "{}");
+  if(saved.pizzas){
+    saved.pizzas.forEach(p=>{
+      const whole = Math.floor(p.qty);
+      const slice = Math.round((p.qty - whole) * 8);
+      const elWhole = document.getElementById("whole_" + p.name);
+      const elSlice = document.getElementById("slice_" + p.name);
+      if(elWhole) elWhole.value = whole;
+      if(elSlice) elSlice.value = slice;
+    });
+    if(saved.user) document.getElementById("stockUser").value = saved.user;
+    if(saved.weather) document.getElementById("weather").value = saved.weather;
+    if(saved.traffic) document.getElementById("traffic").value = saved.traffic;
+    if(saved.timestamp) showLastUpdate(saved.timestamp);
+    document.getElementById("newBtn").classList.remove("hidden");
+
+    document.getElementById("stockUser").disabled = true;
+    document.getElementById("weather").disabled = true;
+    document.getElementById("traffic").disabled = true;
+    pizzas.forEach(p=>{
+      document.getElementById("whole_" + p).disabled = true;
+      document.getElementById("slice_" + p).disabled = true;
+    });
+    document.getElementById("submitStockBtn").disabled = true;
+  }
 }
 
 /* VALIDACIÓN + SUBMIT */
 async function submitStock(){
 
-  const user = document.getElementById("stockUser").value;
+  const user = document.getElementById("stockUser").value.trim();
   const weather = document.getElementById("weather").value;
   const traffic = document.getElementById("traffic").value;
 
   if(!user || !weather || !traffic){
-    alert("Complete all fields");
+    alert("Please complete all fields");
     return;
   }
 
-  const pizzas=[];
-  let valid=true;
+  let valid = true;
 
   document.querySelectorAll("[id^=whole_]").forEach(i=>{
-    const name = i.id.replace("whole_","");
-    const whole = i.value;
-    const slice = document.getElementById("slice_" + name).value;
-
-    if(whole === "" || slice === ""){
-      valid=false;
+    const slice = document.getElementById("slice_" + i.id.replace("whole_",""));
+    if(i.value === "" || slice.value === ""){
+      valid = false;
     }
-
-    const total = Number(whole) + Number(slice)/8; /* NUEVA FÓRMULA */
-    pizzas.push({name, qty: total});
   });
 
   if(!valid){
@@ -290,6 +312,17 @@ async function submitStock(){
   }
 
   if(!confirm("Are you sure?")) return;
+
+  blockForm();
+
+  const pizzas=[];
+  document.querySelectorAll("[id^=whole_]").forEach(i=>{
+    const name = i.id.replace("whole_","");
+    const whole = Number(i.value)||0;
+    const slice = Number(document.getElementById("slice_" + name).value)||0;
+    const total = whole + (slice/8); // ✅ CORREGIDO
+    pizzas.push({ name, qty: total });
+  });
 
   const res = await fetch(`${URL}?action=submitStock&data=${encodeURIComponent(JSON.stringify({
     user, weather, traffic, pizzas
@@ -302,9 +335,60 @@ async function submitStock(){
   localStorage.setItem("lastStockSubmit", JSON.stringify({
     user, weather, traffic, pizzas, timestamp: data.timestamp
   }));
+
+  showLastUpdate(data.timestamp);
+  document.getElementById("newBtn").classList.remove("hidden");
+
+  document.getElementById("stockUser").disabled = true;
+  document.getElementById("weather").disabled = true;
+  document.getElementById("traffic").disabled = true;
+  pizzas.forEach(p=>{
+    document.getElementById("whole_" + p.name).disabled = true;
+    document.getElementById("slice_" + p.name).disabled = true;
+  });
+  document.getElementById("submitStockBtn").disabled = true;
 }
 
-/* DROP */
+/* RESET, DROP, ETC (SIN CAMBIOS) */
+function resetForm(){
+  document.getElementById("stockUser").value = "";
+  document.getElementById("weather").value = "";
+  document.getElementById("traffic").value = "";
+  document.querySelectorAll("[id^=whole_]").forEach(i=>{
+    i.value = "";
+    i.disabled = false;
+  });
+  document.querySelectorAll("[id^=slice_]").forEach(i=>{
+    i.value = "";
+    i.disabled = false;
+  });
+  document.getElementById("stockUser").disabled = false;
+  document.getElementById("weather").disabled = false;
+  document.getElementById("traffic").disabled = false;
+  document.getElementById("submitStockBtn").disabled = false;
+  document.getElementById("newBtn").classList.add("hidden");
+  document.getElementById("lastUpdate").classList.add("hidden");
+  localStorage.removeItem("lastStockSubmit");
+}
+
+function blockForm(){
+  document.querySelectorAll("input, select, button")
+    .forEach(el=>{
+      if(el.classList.contains("tabBtn") || el.id === "newBtn") return;
+      el.disabled = true;
+    });
+}
+
+function showLastUpdate(date){
+  const d = new Date(date);
+  const text = d.toLocaleDateString('en-GB') +
+    " at " + d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+
+  const el = document.getElementById("lastUpdate");
+  el.innerText = "Last update at " + text;
+  el.classList.remove("hidden");
+}
+
 async function loadDrop(){
   const res = await fetch(`${URL}?action=getLastDrop`);
   const data = await res.json();
