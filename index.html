@@ -52,39 +52,55 @@ body{
   margin:0 auto;
 }
 
-/* FILAS: columna Pizza más separada, Whole y Slices juntas */
-.row{
-  display:flex;
-  justify-content:flex-start;
+/* STOCK INFO - estilo tabla invisible */
+#stockForm{
+  display:grid;
+  grid-template-columns: 1fr 120px 120px; /* Pizza | Whole | Slice */
+  gap:10px 20px;
   align-items:center;
-  margin:8px 0;
-  gap:15px; /* espacio entre columnas */
 }
 
-.row span, .row b{
-  display:inline-block;
-  min-width:200px; /* columna Pizza más separada */
-  font-size:20px; 
+#stockForm .row{
+  display:contents; /* usamos grid del contenedor */
+}
+
+#stockForm span.bold{
   text-align:left;
+  font-size:20px;
 }
 
-.row input.whole{
-  text-align:right;
-  width:80px;
-}
-
-.row input.slice{
+#stockForm input.whole, 
+#stockForm input.slice{
+  font-size:20px;
+  padding:8px 6px; /* altura y largura decentes */
   text-align:center;
-  width:80px;
+  width:100%;
+  box-sizing:border-box;
 }
 
-/* DROPDOWNS MÁS ANCHOS */
+#stockForm input.whole{
+  text-align:right;
+}
+
+#stockForm input.slice{
+  text-align:center;
+}
+
+/* Headers */
+#stockForm .header{
+  font-weight:bold;
+  font-size:22px;
+  text-align:left;
+  padding-bottom:6px;
+}
+
+/* Dropdowns más anchos */
 .row select{
   width:600px; /* 3 veces más largo */
   font-size:20px;
 }
 
-/* Inputs grandes */
+/* Inputs grandes para nombre */
 .bigInput{
   font-size:22px;
   width:220px;
@@ -236,20 +252,16 @@ async function loadPizzas(){
 
   // headers
   formDiv.innerHTML += `
-    <div class="row bold">
-      <span>Pizza</span>
-      <span>Whole pies</span>
-      <span>Slices</span>
-    </div>
+    <span class="header">Pizza</span>
+    <span class="header">Whole pies</span>
+    <span class="header">Slices</span>
   `;
 
   pizzas.forEach(p=>{
     formDiv.innerHTML += `
-      <div class="row">
-        <span class="bold">${p}</span>
-        <input id="whole_${p}" class="whole" type="number" min="0">
-        <input id="slice_${p}" class="slice" type="number" min="0" step="0.1">
-      </div>
+      <span class="bold">${p}</span>
+      <input id="whole_${p}" class="whole" type="number" min="0">
+      <input id="slice_${p}" class="slice" type="number" min="0" step="0.1">
     `;
   });
 
