@@ -13,15 +13,13 @@ body{
 }
 
 .logo{
-  width:200px;
+  width:140px;
   margin:auto;
   display:block;
-  margin-bottom:10px;
 }
 
 .title{
   font-size:28px; 
-  font-weight:bold;
   margin-top:10px;
 }
 
@@ -50,52 +48,31 @@ body{
   margin:0 auto;
 }
 
-/* Weather y Traffic filas */
 .row{
   display:flex;
-  justify-content:flex-start;
+  justify-content:space-between;
   align-items:center;
   margin:8px 0;
 }
 
-.row span{
-  min-width:140px; /* espacio entre palabra y dropdown */
-  font-size:20px;
+.row span, .row b{
+  display:inline-block;
+  min-width:120px;
+  font-size:20px; 
 }
 
-.row select{
-  width:100px; /* dropdown tamaño medio */
-  font-size:18px;
-  margin-left:10px;
+.row input, .row select{
+  width:60px; /* casi cuadrados */
+  font-size:20px;
+  text-align:center; 
 }
 
-.row input{
-  font-size:20px;
+.row input.whole{
+  text-align:right; /* Whole pies alineados a la derecha */
+}
+
+.row input.slice{
   text-align:center;
-  width:60px;
-}
-
-/* Stock Form tabla invisible */
-#stockForm{
-  display:grid;
-  grid-template-columns: 180px 80px 80px; /* pizza | whole pies | slices */
-  justify-content:center;
-  row-gap:10px;
-  column-gap:10px;
-  margin-top:15px;
-}
-
-#stockForm .header{
-  font-weight:bold;
-  font-size:20px;
-}
-
-#stockForm input.whole{
-  text-align:right;
-}
-
-#stockForm input.slice{
-  text-align:left;
 }
 
 .bigInput{
@@ -103,6 +80,10 @@ body{
   width:220px;
   text-align:center;
   margin:20px auto 15px;
+}
+
+select{
+  width:200px; /* dropdown más largo */
 }
 
 button{
@@ -114,14 +95,18 @@ button{
   display:none;
 }
 
+.bold{
+  font-weight:bold;
+}
+
 #lastUpdate{
   margin-top:10px;
 }
 
-/* Last Drop */
+/* Last Drop: grid tabla centrada */
 #dropData{
   display:grid;
-  grid-template-columns: auto 60px;
+  grid-template-columns: auto 60px; /* pizza | qty */
   justify-content:center;
   gap:20px;
   row-gap:6px;
@@ -130,7 +115,7 @@ button{
 
 #dropData .header{
   font-weight:bold;
-  font-size:22px; 
+  font-size:22px; /* más grande que antes */
 }
 
 #dropData .cell{
@@ -245,16 +230,20 @@ async function loadPizzas(){
 
   // headers
   formDiv.innerHTML += `
-    <div class="header">Pizza</div>
-    <div class="header">Whole pies</div>
-    <div class="header">Slices</div>
+    <div class="row bold">
+      <span>Pizza</span>
+      <span>Whole pies</span>
+      <span>Slices</span>
+    </div>
   `;
 
   pizzas.forEach(p=>{
     formDiv.innerHTML += `
-      <div>${p}</div>
-      <input id="whole_${p}" class="whole" type="number" min="0">
-      <input id="slice_${p}" class="slice" type="number" min="0" step="0.1">
+      <div class="row">
+        <span class="bold">${p}</span>
+        <input id="whole_${p}" class="whole" type="number" min="0">
+        <input id="slice_${p}" class="slice" type="number" min="0" step="0.1">
+      </div>
     `;
   });
 
@@ -262,7 +251,7 @@ async function loadPizzas(){
   if(saved.pizzas){
     saved.pizzas.forEach(p=>{
       const whole = Math.floor(p.qty);
-      const slice = Math.round((p.qty - whole) * 0.8*10)/10;
+      const slice = Math.round((p.qty - whole) * 0.8*10)/10; // reconstruimos slice
       const elWhole = document.getElementById("whole_" + p.name);
       const elSlice = document.getElementById("slice_" + p.name);
       if(elWhole) elWhole.value = whole;
@@ -274,6 +263,7 @@ async function loadPizzas(){
     if(saved.timestamp) showLastUpdate(saved.timestamp);
     document.getElementById("newBtn").classList.remove("hidden");
 
+    // BLOQUEAR inputs y botón submit
     document.getElementById("stockUser").disabled = true;
     document.getElementById("weather").disabled = true;
     document.getElementById("traffic").disabled = true;
@@ -359,6 +349,7 @@ async function submitStock(){
 
   alert("Submitted");
 
+  // Guardamos en localStorage
   localStorage.setItem("lastStockSubmit", JSON.stringify({
     user, weather, traffic, pizzas, timestamp: data.timestamp
   }));
@@ -366,6 +357,7 @@ async function submitStock(){
   showLastUpdate(data.timestamp);
   document.getElementById("newBtn").classList.remove("hidden");
 
+  // BLOQUEAR inputs y botón submit
   document.getElementById("stockUser").disabled = true;
   document.getElementById("weather").disabled = true;
   document.getElementById("traffic").disabled = true;
