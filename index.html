@@ -30,9 +30,9 @@ body{
 }
 
 .tabBtn{
-  padding:12px 20px;
+  padding:15px 25px;
   margin:5px;
-  font-size:18px;
+  font-size:20px; /* agrandados */
 }
 
 .section{
@@ -44,33 +44,26 @@ body{
 }
 
 .left{
-  text-align:left;
   max-width:400px;
-  margin:auto;
+  margin:0 auto;
 }
 
 .row{
   display:flex;
-  justify-content:center;
+  justify-content:space-between;
   align-items:center;
-  gap:50px;
-  margin:10px 0;
+  margin:6px 0;
 }
 
 .row span, .row b{
-  min-width:100px;
-  text-align:center;
+  display:inline-block;
+  min-width:150px;
+  text-align:left;
 }
 
-input{
-  width:80px;
-  font-size:18px;
-  text-align:center;
-}
-
-select{
-  width:150px;
-  font-size:16px;
+.row input{
+  width:60px;
+  text-align:right;
 }
 
 .bigInput{
@@ -92,6 +85,10 @@ button{
 .bold{
   font-weight:bold;
 }
+
+#lastUpdate{
+  margin-top:10px;
+}
 </style>
 </head>
 
@@ -104,9 +101,6 @@ button{
 
 <button class="tabBtn" onclick="showTab('stock')">Stock Form</button>
 <button class="tabBtn" onclick="showTab('drop')">Last Drop</button>
-
-<div id="lastUpdate" class="date hidden"></div>
-<button id="newBtn" class="hidden" onclick="resetForm()">New Submit</button>
 
 <!-- STOCK -->
 <div id="stock" class="section">
@@ -140,10 +134,11 @@ button{
 
 <div id="stockForm"></div>
 
+<button id="submitStockBtn" onclick="submitStock()">Submit Stock</button>
+<button id="newBtn" class="hidden" onclick="resetForm()">New Submit</button>
+<div id="lastUpdate" class="hidden"></div>
+
 </div>
-
-<button onclick="submitStock()">Submit Stock</button>
-
 </div>
 
 <!-- DROP -->
@@ -157,7 +152,7 @@ button{
 </div>
 
 <script>
-const URL = "https://script.google.com/macros/s/AKfycbzCkV1ETniuZLTvxvV4IJNJ2hoRBs_0qyTOCtyhxMS4QHAxDDGVdl8O3JCSnGOj0G8a/exec";
+const URL = "https://script.google.com/macros/s/AKfycbyd7ApDKG20vaU-IVCkBMekXzMMQW07bjsADE54zRbbNuTxm4zf08MoDWQEq8wz_B52/exec";
 
 /* DATE */
 function setDate(){
@@ -194,14 +189,31 @@ async function loadPizzas(){
   const res = await fetch(`${URL}?action=getPizzas`);
   const pizzas = await res.json();
 
+  const formDiv = document.getElementById("stockForm");
+  formDiv.innerHTML = ""; // limpio
+
   pizzas.forEach(p=>{
-    document.getElementById("stockForm").innerHTML += `
+    formDiv.innerHTML += `
       <div class="row">
         <span class="bold">${p}</span>
         <input id="stock_${p}" type="number">
       </div>
     `;
   });
+
+  // Si hay datos guardados, cargar en los inputs
+  const saved = JSON.parse(localStorage.getItem("lastStockSubmit") || "{}");
+  if(saved.pizzas){
+    saved.pizzas.forEach(p=>{
+      const el = document.getElementById("stock_" + p.name);
+      if(el) el.value = p.qty;
+    });
+    if(saved.user) document.getElementById("stockUser").value = saved.user;
+    if(saved.weather) document.getElementById("weather").value = saved.weather;
+    if(saved.traffic) document.getElementById("traffic").value = saved.traffic;
+    if(saved.timestamp) showLastUpdate(saved.timestamp);
+    document.getElementById("newBtn").classList.remove("hidden");
+  }
 }
 
 /* BLOCK FORM */
@@ -222,12 +234,11 @@ function showLastUpdate(date){
   const el = document.getElementById("lastUpdate");
   el.innerText = "Last update at " + text;
   el.classList.remove("hidden");
-
-  document.getElementById("newBtn").classList.remove("hidden");
 }
 
 /* RESET */
 function resetForm(){
+  localStorage.removeItem("lastStockSubmit");
   location.reload();
 }
 
@@ -242,7 +253,6 @@ async function submitStock(){
   const traffic = document.getElementById("traffic").value;
 
   const pizzas=[];
-
   document.querySelectorAll("[id^=stock_]").forEach(i=>{
     pizzas.push({
       name: i.id.replace("stock_",""),
@@ -258,7 +268,13 @@ async function submitStock(){
 
   alert("Submitted");
 
+  // Guardamos en localStorage
+  localStorage.setItem("lastStockSubmit", JSON.stringify({
+    user, weather, traffic, pizzas, timestamp: data.timestamp
+  }));
+
   showLastUpdate(data.timestamp);
+  document.getElementById("newBtn").classList.remove("hidden");
 }
 
 /* LOAD DROP */
