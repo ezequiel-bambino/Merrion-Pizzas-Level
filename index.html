@@ -50,56 +50,32 @@ body{
   margin:0 auto;
 }
 
-/* MÁS ESPACIO ENTRE ROWS SUPERIORES */
 .row{
-  margin:16px 0;
-}
-
-/* DROPDOWNS AJUSTADOS */
-.row select{
-  width:300px; /* mitad de 600 */
-  font-size:20px;
-  display:block;
-  margin:0 auto;
-  text-align:center;
-  text-align-last:center;
-}
-
-/* STOCK GRID */
-#stockForm, #closingForm{
-  display:grid;
-  grid-template-columns: 1fr 100px 100px 120px;
-  gap:12px 20px;
+  display:flex;
+  justify-content:space-between;
   align-items:center;
+  margin:12px 0;
 }
 
-#stockForm span.bold, #closingForm span.bold{
-  text-align:left;
+.row span, .row b{
+  display:inline-block;
+  min-width:120px;
   font-size:20px;
 }
 
-#stockForm input.whole, 
-#stockForm input.slice,
-#closingForm input.whole,
-#closingForm input.slice,
-#closingForm input.time{
+.row input, .row select{
+  width:60px;
   font-size:20px;
+  text-align:center;
   padding:6px;
-  width:80px;
-  text-align:center; /* centrado */
-  box-sizing:border-box;
-  margin:auto;
 }
 
-#closingForm input.time{
-  width:120px;
+.row input.whole{
+  text-align:right;
 }
 
-#stockForm .header, #closingForm .header{
-  font-weight:bold;
-  font-size:22px;
-  text-align:left;
-  padding-bottom:6px;
+.row input.slice{
+  text-align:center;
 }
 
 .bigInput{
@@ -126,7 +102,25 @@ button{
   margin-top:10px;
 }
 
-/* Last Drop */
+/* DROPDOWN */
+.row select{
+  width:300px;
+  font-size:20px;
+  display:block;
+  margin:0 auto;
+  text-align:center;
+  text-align-last:center;
+}
+
+/* STOCK FORM HEADERS */
+#stockForm .header{
+  font-weight:bold;
+  font-size:22px;
+  text-align:left;
+  padding-bottom:6px;
+}
+
+/* LAST DROP */
 #dropData{
   display:grid;
   grid-template-columns: auto 60px;
@@ -165,58 +159,48 @@ button{
 
 <!-- STOCK -->
 <div id="stock" class="section">
+  <input id="stockUser" class="bigInput" placeholder="Your name">
+  <div class="left">
+    <div class="row">
+      <span>Weather Forecast</span>
+      <select id="weather">
+        <option value=""></option>
+        <option>Sunny</option>
+        <option>Cloudy</option>
+        <option>Rainy</option>
+        <option>Storm</option>
+      </select>
+    </div>
 
-<input id="stockUser" class="bigInput" placeholder="Your name">
+    <div class="row">
+      <span>How's today going?</span>
+      <select id="traffic">
+        <option value=""></option>
+        <option>Quiet</option>
+        <option>Normal</option>
+        <option>Busy</option>
+      </select>
+    </div>
 
-<div class="left">
+    <h3 style="text-align:center;">Stock Info</h3>
+    <div id="stockForm"></div>
 
-<div class="row">
-  <span>Weather Forecast</span>
-  <select id="weather">
-    <option value=""></option>
-    <option>Sunny</option>
-    <option>Cloudy</option>
-    <option>Rainy</option>
-    <option>Storm</option>
-  </select>
-</div>
-
-<div class="row">
-  <span>How's today going?</span>
-  <select id="traffic">
-    <option value=""></option>
-    <option>Quiet</option>
-    <option>Normal</option>
-    <option>Busy</option>
-  </select>
-</div>
-
-<h3 style="text-align:center;">Stock Info</h3>
-
-<div id="stockForm"></div>
-
-<button id="submitStockBtn" onclick="submitStock()">Submit Stock</button>
-<button id="newBtn" class="hidden" onclick="resetForm()">New Submit</button>
-<div id="lastUpdate" class="hidden"></div>
-
-</div>
+    <button id="submitStockBtn" onclick="submitStock()">Submit Stock</button>
+    <button id="newBtn" class="hidden" onclick="resetForm()">New Submit</button>
+    <div id="lastUpdate" class="hidden"></div>
+  </div>
 </div>
 
 <!-- CLOSING LOG -->
 <div id="closing" class="section">
-
-<input id="closingUser" class="bigInput" placeholder="Your name">
-
-<div class="left">
-<h3 style="text-align:center;">Closing Log</h3>
-
-<div id="closingForm"></div>
-
-<button id="submitClosingBtn" onclick="submitClosing()">Submit Log</button>
-<button id="newClosingBtn" class="hidden" onclick="resetClosing()">New Submit</button>
-<div id="closingUpdate" class="hidden"></div>
-
-</div>
+  <input id="closingUser" class="bigInput" placeholder="Your name">
+  <div class="left">
+    <h3 style="text-align:center;">Closing Log</h3>
+    <div id="closingForm"></div>
+    <button id="submitClosingBtn" onclick="submitClosing()">Submit Log</button>
+    <button id="newClosingBtn" class="hidden" onclick="resetClosing()">New Submit</button>
+    <div id="closingUpdate" class="hidden"></div>
+  </div>
 </div>
 
 <!-- DROP -->
@@ -229,69 +213,50 @@ button{
 </div>
 
 <script>
-const URL = "https://script.google.com/macros/s/AKfycbx5t21XNUAGdODAr1bSDBbk9u5ecve7S9kHI8P0vBqE7QXzWeodkhQcgTpQ5P5S-oU7/exec";
+const URL="https://script.google.com/macros/s/AKfycbx5t21XNUAGdODAr1bSDBbk9u5ecve7S9kHI8P0vBqE7QXzWeodkhQcgTpQ5P5S-oU7/exec";
 
 /* DATE */
 function setDate(){
   const today = new Date();
-  document.getElementById("todayDate").innerText =
-    today.toLocaleDateString('en-GB',{
-      weekday:'long',
-      day:'numeric',
-      month:'long'
-    });
+  document.getElementById("todayDate").innerText = today.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'});
 }
 
 /* TAB CONTROL */
 function showTab(tab){
-  document.querySelectorAll(".section")
-    .forEach(s => s.classList.remove("active"));
+  document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
   document.getElementById(tab).classList.add("active");
 
-  if(tab === "stock"){
-    if(!window.loadedStock){
-      loadPizzas();
-      window.loadedStock = true;
-    }
-  }
-  if(tab === "closing"){
-    if(!window.loadedClosing){
-      loadClosing();
-      window.loadedClosing = true;
-    }
-  }
-  if(tab === "drop"){
-    loadDrop();
-  }
+  if(tab==="stock" && !window.loadedStock) { loadPizzas(); window.loadedStock=true; }
+  if(tab==="closing" && !window.loadedClosing) { loadClosing(); window.loadedClosing=true; }
+  if(tab==="drop") loadDrop();
 }
 
 /* ===== STOCK FORM ===== */
 async function loadPizzas(){
-  const res = await fetch(`${URL}?action=getPizzas`);
-  const pizzas = await res.json();
-  const formDiv = document.getElementById("stockForm");
-  formDiv.innerHTML = `
-    <span class="header">Pizza</span>
-    <span class="header">Whole pies</span>
-    <span class="header">Slices</span>
-  `;
+  const res=await fetch(`${URL}?action=getPizzas`);
+  const pizzas=await res.json();
+  const formDiv=document.getElementById("stockForm");
+  formDiv.innerHTML=`<div class="row header"><span>Pizza</span><span>Whole pies</span><span>Slices</span></div>`;
+
   pizzas.forEach(p=>{
-    formDiv.innerHTML += `
-      <span class="bold">${p}</span>
-      <input id="whole_${p}" class="whole" type="number" min="0">
-      <input id="slice_${p}" class="slice" type="number" min="0" step="1">
+    formDiv.innerHTML+=`
+      <div class="row">
+        <span class="bold">${p}</span>
+        <input id="whole_${p}" class="whole" type="number" min="0">
+        <input id="slice_${p}" class="slice" type="number" min="0" step="1">
+      </div>
     `;
   });
 
-  const saved = JSON.parse(localStorage.getItem("lastStockSubmit")||"{}");
+  const saved=JSON.parse(localStorage.getItem("lastStockSubmit")||"{}");
   if(saved.pizzas){
     saved.pizzas.forEach(p=>{
-      const whole = Math.floor(p.qty);
-      const slice = Math.round((p.qty - whole)*8);
-      const elWhole = document.getElementById("whole_"+p.name);
-      const elSlice = document.getElementById("slice_"+p.name);
-      if(elWhole) elWhole.value = whole;
-      if(elSlice) elSlice.value = slice;
+      const whole=Math.floor(p.qty);
+      const slice=Math.round((p.qty-whole)*8);
+      const elWhole=document.getElementById("whole_"+p.name);
+      const elSlice=document.getElementById("slice_"+p.name);
+      if(elWhole) elWhole.value=whole;
+      if(elSlice) elSlice.value=slice;
     });
     if(saved.user) document.getElementById("stockUser").value=saved.user;
     if(saved.weather) document.getElementById("weather").value=saved.weather;
@@ -312,34 +277,34 @@ async function loadPizzas(){
 
 /* STOCK FORM SUBMIT */
 async function submitStock(){
-  const user = document.getElementById("stockUser").value.trim();
-  const weather = document.getElementById("weather").value;
-  const traffic = document.getElementById("traffic").value;
-  if(!user || !weather || !traffic){ alert("Please complete all fields"); return; }
+  const user=document.getElementById("stockUser").value.trim();
+  const weather=document.getElementById("weather").value;
+  const traffic=document.getElementById("traffic").value;
+  if(!user||!weather||!traffic){ alert("Please complete all fields"); return; }
 
-  let valid = true;
-  document.querySelectorAll("[id^=whole_]").forEach(i=>{
-    const slice = document.getElementById("slice_"+i.id.replace("whole_",""));
-    if(i.value==="" || slice.value==="") valid=false;
+  let valid=true;
+  document.querySelectorAll("#stockForm [id^=whole_]").forEach(i=>{
+    const slice=document.getElementById("slice_"+i.id.replace("whole_",""));
+    if(i.value===""||slice.value==="") valid=false;
   });
   if(!valid){ alert("Fill all pizza fields"); return; }
   if(!confirm("Are you sure?")) return;
 
   const pizzas=[];
-  document.querySelectorAll("[id^=whole_]").forEach(i=>{
-    const name = i.id.replace("whole_","");
-    const whole = Number(i.value)||0;
-    const slice = Number(document.getElementById("slice_"+name).value)||0;
-    pizzas.push({ name, qty: whole + slice/8 });
+  document.querySelectorAll("#stockForm [id^=whole_]").forEach(i=>{
+    const name=i.id.replace("whole_","");
+    const whole=Number(i.value)||0;
+    const slice=Number(document.getElementById("slice_"+name).value)||0;
+    pizzas.push({name, qty: whole+slice/8});
   });
 
-  const res = await fetch(`${URL}?action=submitStock&data=${encodeURIComponent(JSON.stringify({user,weather,traffic,pizzas}))}`);
-  const data = await res.json();
+  const res=await fetch(`${URL}?action=submitStock&data=${encodeURIComponent(JSON.stringify({user,weather,traffic,pizzas}))}`);
+  const data=await res.json();
   alert("Submitted");
-  localStorage.setItem("lastStockSubmit", JSON.stringify({user,weather,traffic,pizzas,timestamp:data.timestamp}));
+
+  localStorage.setItem("lastStockSubmit",JSON.stringify({user,weather,traffic,pizzas,timestamp:data.timestamp}));
   showLastUpdate(data.timestamp);
   document.getElementById("newBtn").classList.remove("hidden");
-
   document.getElementById("stockUser").disabled=true;
   document.getElementById("weather").disabled=true;
   document.getElementById("traffic").disabled=true;
@@ -354,80 +319,65 @@ function resetForm(){
   document.getElementById("stockUser").value="";
   document.getElementById("weather").value="";
   document.getElementById("traffic").value="";
-  document.querySelectorAll("[id^=whole_]").forEach(i=>{ i.value=""; i.disabled=false; });
-  document.querySelectorAll("[id^=slice_]").forEach(i=>{ i.value=""; i.disabled=false; });
+  document.querySelectorAll("#stockForm input").forEach(i=>{i.value=""; i.disabled=false;});
   document.getElementById("stockUser").disabled=false;
   document.getElementById("weather").disabled=false;
   document.getElementById("traffic").disabled=false;
   document.getElementById("submitStockBtn").disabled=false;
   document.getElementById("newBtn").classList.add("hidden");
   document.getElementById("lastUpdate").classList.add("hidden");
-  localStorage.removeItem("lastStockSubmit");
-}
-
-function blockForm(){
-  document.querySelectorAll("input, select, button").forEach(el=>{
-    if(el.classList.contains("tabBtn") || el.id==="newBtn") return;
-    el.disabled=true;
-  });
-}
-
-function showLastUpdate(date){
-  const d = new Date(date);
-  const text = d.toLocaleDateString('en-GB') + " at " + d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
-  const el=document.getElementById("lastUpdate");
-  el.innerText="Last update at "+text;
-  el.classList.remove("hidden");
 }
 
 /* ===== CLOSING LOG ===== */
 async function loadClosing(){
-  const res = await fetch(`${URL}?action=getPizzas`);
-  const pizzas = await res.json();
-  const formDiv = document.getElementById("closingForm");
-  formDiv.innerHTML = `
-    <span class="header">Pizza</span>
-    <span class="header">Whole</span>
-    <span class="header">Slices</span>
-    <span class="header">Sellout Time</span>
+  const res=await fetch(`${URL}?action=getPizzas`);
+  const pizzas=await res.json();
+  const formDiv=document.getElementById("closingForm");
+  formDiv.innerHTML=`
+    <div class="row header">
+      <span>Pizza</span>
+      <span style="text-align:center" colspan="2">Waste</span>
+      <span>Sellout Time</span>
+    </div>
   `;
   pizzas.forEach(p=>{
-    formDiv.innerHTML += `
-      <span class="bold">${p}</span>
-      <input id="whole_${p}" class="whole" type="number" min="0">
-      <input id="slice_${p}" class="slice" type="number" min="0">
-      <input id="time_${p}" class="time" type="time">
+    formDiv.innerHTML+=`
+      <div class="row">
+        <span class="bold">${p}</span>
+        <input id="whole_${p}" class="whole" type="number" min="0">
+        <input id="slice_${p}" class="slice" type="number" min="0">
+        <input id="time_${p}" class="time" type="time">
+      </div>
     `;
   });
 }
 
 async function submitClosing(){
-  const user = document.getElementById("closingUser").value.trim();
+  const user=document.getElementById("closingUser").value.trim();
   if(!user){ alert("Enter your name"); return; }
 
-  let valid = true;
-  document.querySelectorAll("[id^=whole_]").forEach(i=>{
-    const name=i.id.replace("whole_","");
-    const slice=document.getElementById("slice_"+name);
-    const t=document.getElementById("time_"+name);
-    if(i.value===""||slice.value===""||t.value==="") valid=false;
+  let valid=true;
+  document.querySelectorAll("#closingForm .row").forEach(row=>{
+    const whole=row.querySelector("input.whole");
+    const slice=row.querySelector("input.slice");
+    const time=row.querySelector("input.time");
+    if(!whole.value||!slice.value||!time.value) valid=false;
   });
+
   if(!valid){ alert("Fill all fields"); return; }
   if(!confirm("Submit closing log?")) return;
 
   const pizzas=[];
-  document.querySelectorAll("[id^=whole_]").forEach(i=>{
-    const name=i.id.replace("whole_","");
-    pizzas.push({
-      name,
-      whole:Number(i.value),
-      slice:Number(document.getElementById("slice_"+name).value),
-      time:document.getElementById("time_"+name).value
-    });
+  document.querySelectorAll("#closingForm .row").forEach(row=>{
+    const name=row.querySelector("span.bold").innerText;
+    const whole=Number(row.querySelector("input.whole").value);
+    const slice=Number(row.querySelector("input.slice").value);
+    const time=row.querySelector("input.time").value;
+    pizzas.push({name, whole, slice, time});
   });
 
-  const res = await fetch(`${URL}?action=submitClosing&data=${encodeURIComponent(JSON.stringify({user,pizzas}))}`);
-  const data = await res.json();
+  const res=await fetch(`${URL}?action=submitClosing&data=${encodeURIComponent(JSON.stringify({user,pizzas}))}`);
+  const data=await res.json();
   alert("Submitted");
 
   document.getElementById("closingUser").disabled=true;
@@ -449,18 +399,12 @@ function resetClosing(){
 
 /* ===== LAST DROP ===== */
 async function loadDrop(){
-  const res = await fetch(`${URL}?action=getLastDrop`);
-  const data = await res.json();
-  const div = document.getElementById("dropData");
-  div.innerHTML = `
-    <div class="header cell">Pizza</div>
-    <div class="header cell qty">QTY</div>
-  `;
+  const res=await fetch(`${URL}?action=getLastDrop`);
+  const data=await res.json();
+  const div=document.getElementById("dropData");
+  div.innerHTML=`<div class="header cell">Pizza</div><div class="header cell qty">QTY</div>`;
   data.forEach(d=>{
-    div.innerHTML += `
-      <div class="cell">${d.pizza}</div>
-      <div class="cell qty">${d.lastDrop}</div>
-    `;
+    div.innerHTML+=`<div class="cell">${d.pizza}</div><div class="cell qty">${d.lastDrop}</div>`;
   });
 }
 
