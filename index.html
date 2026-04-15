@@ -142,32 +142,9 @@ button{
 /* CLOSING FORM TABLE */
 #closingForm {
   display:grid;
-  grid-template-columns: 1fr 140px 220px;
+  grid-template-columns: 1fr 100px 100px 100px; /* pizza | waste pies | waste slices | sellout time */
   gap:12px 20px;
   align-items:center;
-}
-
-.modeSelect{
-  font-size:18px;
-  padding:5px;
-}
-
-.inputGroup{
-  display:flex;
-  gap:5px;
-  justify-content:center;
-}
-
-.inputGroup input{
-  width:70px;
-  font-size:18px;
-  padding:5px;
-  text-align:center;
-}
-
-.selloutInput{
-  font-size:18px;
-  padding:5px;
 }
 
 #closingForm span.bold {
@@ -460,54 +437,24 @@ async function loadDrop(){
 async function loadClosing(){
   const res = await fetch(`${URL}?action=getPizzas`);
   const pizzas = await res.json();
-
   const formDiv = document.getElementById("closingForm");
   formDiv.innerHTML="";
 
   formDiv.innerHTML += `
     <span class="header">Pizza</span>
-    <span class="header">Type</span>
-    <span class="header">Details</span>
+    <span class="header">Waste pies</span>
+    <span class="header">Waste slices</span>
+    <span class="header">Sellout time</span>
   `;
 
   pizzas.forEach(p=>{
     formDiv.innerHTML += `
       <span class="bold">${p}</span>
-
-      <select id="mode_${p}" class="modeSelect">
-        <option value=""></option>
-        <option value="sellout">Sold Out</option>
-        <option value="waste">Waste</option>
-      </select>
-
-      <div id="details_${p}"></div>
+      <input id="wasteWhole_${p}" class="whole" type="number" min="0">
+      <input id="wasteSlice_${p}" class="slice" type="number" min="0" step="1">
+      <input id="sellout_${p}" class="sellout" type="time">
     `;
   });
-
-  pizzas.forEach(p=>{
-    const mode = document.getElementById("mode_"+p);
-    const details = document.getElementById("details_"+p);
-
-    mode.addEventListener("change", ()=>{
-      details.innerHTML="";
-
-      if(mode.value==="sellout"){
-        details.innerHTML = `
-          <input type="time" id="sellout_${p}" class="selloutInput">
-        `;
-      }
-
-      if(mode.value==="waste"){
-        details.innerHTML = `
-          <div class="inputGroup">
-            <input type="number" id="wasteWhole_${p}" placeholder="pies">
-            <input type="number" id="wasteSlice_${p}" placeholder="slices">
-          </div>
-        `;
-      }
-    });
-  });
-}
 
   const saved = JSON.parse(localStorage.getItem("lastClosingSubmit") || "{}");
   if(saved.pizzas){
@@ -530,59 +477,15 @@ async function submitClosing(){
   const user = document.getElementById("closingUser").value.trim();
   if(!user){ alert("Please enter your name"); return; }
 
-  const pizzas = [];
-  let valid = true;
-
-  document.querySelectorAll("[id^=mode_]").forEach(el=>{
-    const name = el.id.replace("mode_","");
-    const mode = el.value;
-
-    if(!mode) valid = false;
-
-    if(mode==="sellout"){
-      const time = document.getElementById("sellout_"+name)?.value;
-      if(!time) valid=false;
-
-      pizzas.push({
-        name,
-        waste:0,
-        selloutTime:time
-      });
-    }
-
-    if(mode==="waste"){
-      const whole = Number(document.getElementById("wasteWhole_"+name)?.value)||0;
-      const slice = Number(document.getElementById("wasteSlice_"+name)?.value)||0;
-
-      if(whole===0 && slice===0) valid=false;
-
-      pizzas.push({
-        name,
-        waste: whole + (slice/8),
-        selloutTime:""
-      });
-    }
+  let valid=true;
+  document.querySelectorAll("[id^=wasteWhole_]").forEach(i=>{
+    const name=i.id.replace("wasteWhole_","");
+    const slice=document.getElementById("wasteSlice_"+name);
+    const time=document.getElementById("sellout_"+name);
+    if(i.value==="" || slice.value==="" || !time.value) valid=false;
   });
-
-  if(!valid){
-    alert("Complete all pizzas correctly");
-    return;
-  }
-
+  if(!valid){ alert("Fill all fields for each pizza"); return; }
   if(!confirm("Are you sure?")) return;
-
-  blockClosingFormInputs();
-
-  const res = await fetch(`${URL}?action=submitClosing&data=${encodeURIComponent(JSON.stringify({user,pizzas}))}`);
-  const data = await res.json();
-
-  localStorage.setItem("lastClosingSubmit", JSON.stringify({user,pizzas,timestamp:data.timestamp}));
-
-  showLastClosingUpdate(data.timestamp);
-  document.getElementById("newClosingBtn").classList.remove("hidden");
-
-  alert("Closing log submitted");
-}
 
   blockClosingFormInputs();
 
