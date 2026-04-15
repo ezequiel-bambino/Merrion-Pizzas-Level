@@ -406,9 +406,9 @@ function resetForm(){
 }
 
 function blockForm(){
-  document.querySelectorAll("input, select, button").forEach(el=>{
+  document.querySelectorAll("#stock input, #stock select, #stock button").forEach(el=>{
     if(el.classList.contains("tabBtn") || el.id==="newBtn") return;
-    el.disabled=true;
+    el.disabled = true;
   });
 }
 
@@ -513,6 +513,7 @@ function resetClosingForm(){
   document.querySelectorAll("[id^=wasteWhole_]").forEach(i=>{i.value=""; i.disabled=false;});
   document.querySelectorAll("[id^=wasteSlice_]").forEach(i=>{i.value=""; i.disabled=false;});
   document.querySelectorAll("[id^=sellout_]").forEach(i=>{i.value=""; i.disabled=false;});
+  document.getElementById("submitClosingBtn").disabled = false;
   document.getElementById("closingUser").disabled=false;
   document.getElementById("newClosingBtn").classList.add("hidden");
   document.getElementById("lastClosingUpdate").classList.add("hidden");
@@ -520,8 +521,12 @@ function resetClosingForm(){
 }
 
 function blockClosingFormInputs(){
-  document.getElementById("closingUser").disabled=true;
-  document.querySelectorAll("#closingForm input").forEach(i=>i.disabled=true);
+  document.getElementById("closingUser").disabled = true;
+
+  document.querySelectorAll("#closing input, #closing button").forEach(i=>{
+    if(i.id === "newClosingBtn") return;
+    i.disabled = true;
+  });
 }
 
 function showLastClosingUpdate(date){
