@@ -448,23 +448,13 @@ async function loadClosing(){
   `;
 
   pizzas.forEach(p=>{
-  formDiv.innerHTML += `
-    <span class="bold">${p}</span>
-
-    <input id="wasteWhole_${p}" type="number" min="0">
-    <input id="wasteSlice_${p}" type="number" min="0" step="1">
-
-    <button type="button" id="soldBtn_${p}" onclick="markSoldOut('${p}')">
-      Sold Out
-    </button>
-
-    <button type="button" id="resetBtn_${p}" onclick="resetRow('${p}')" disabled>
-      Reset
-    </button>
-
-    <input id="sellout_${p}" type="time" disabled>
-  `;
-});
+    formDiv.innerHTML += `
+      <span class="bold">${p}</span>
+      <input id="wasteWhole_${p}" class="whole" type="number" min="0">
+      <input id="wasteSlice_${p}" class="slice" type="number" min="0" step="1">
+      <input id="sellout_${p}" class="sellout" type="time">
+    `;
+  });
 
   const saved = JSON.parse(localStorage.getItem("lastClosingSubmit") || "{}");
   if(saved.pizzas){
@@ -483,75 +473,6 @@ async function loadClosing(){
   }
 }
 
-  function markSoldOut(p){
-  const whole = document.getElementById("wasteWhole_"+p);
-  const slice = document.getElementById("wasteSlice_"+p);
-  const time  = document.getElementById("sellout_"+p);
-
-  const soldBtn = document.getElementById("soldBtn_"+p);
-  const resetBtn = document.getElementById("resetBtn_"+p);
-
-  // set waste = 0
-  whole.value = 0;
-  slice.value = 0;
-
-  // LOCK waste inputs
-  whole.disabled = true;
-  slice.disabled = true;
-
-  // hide sold out button (replace with time UX)
-  soldBtn.style.display = "none";
-
-  // enable time input
-  time.disabled = false;
-  time.focus();
-
-  // enable reset ONLY after sold out
-  resetBtn.disabled = false;
-}
-
-  function resetRow(p){
-  const whole = document.getElementById("wasteWhole_"+p);
-  const slice = document.getElementById("wasteSlice_"+p);
-  const time  = document.getElementById("sellout_"+p);
-
-  const soldBtn = document.getElementById("soldBtn_"+p);
-  const resetBtn = document.getElementById("resetBtn_"+p);
-
-  // clear values
-  whole.value = "";
-  slice.value = "";
-  time.value = "";
-
-  // unlock waste
-  whole.disabled = false;
-  slice.disabled = false;
-
-  // restore sold out button
-  soldBtn.style.display = "inline-block";
-
-  // disable reset again
-  resetBtn.disabled = true;
-
-  // disable time again
-  time.disabled = true;
-}
-
-  document.querySelectorAll("[id^=wasteWhole_]").forEach(i=>{
-  const name = i.id.replace("wasteWhole_","");
-  const slice = document.getElementById("wasteSlice_"+name);
-  const time  = document.getElementById("sellout_"+name);
-
-  const whole = Number(i.value)||0;
-  const slices = Number(slice.value)||0;
-  const waste = whole + (slices/8);
-
-  if(i.value === "" || slice.value === "") valid = false;
-
-  // sellout required only if sold out
-  if(waste === 0 && !time.value) valid = false;
-});
-  
 async function submitClosing(){
   const user = document.getElementById("closingUser").value.trim();
   if(!user){ alert("Please enter your name"); return; }
