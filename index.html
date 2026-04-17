@@ -1,332 +1,401 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
-<title>Merrion Shop</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Merrion Shop - Kitchen Management</title>
 
 <style>
-body{
-  font-family:Arial;
-  text-align:center;
-  padding:20px;
+* {
+  box-sizing: border-box;
 }
 
-.logo{
-  width:200px;
-  margin:auto;
-  display:block;
-  margin-bottom:10px;
-}
-
-.title{
-  font-size:28px; 
-  font-weight:bold;
-  margin-top:10px;
-}
-
-.date{
-  font-size:14px;
-  color:#777;
-  margin-bottom:15px;
-}
-
-.tabBtn{
-  padding:15px 25px;
-  margin:5px;
-  font-size:22px; 
-  cursor:pointer;
-}
-
-.section{
-  display:none;
-}
-
-.active{
-  display:block;
-}
-
-.left{
-  max-width:600px;
-  margin:0 auto;
-}
-
-/* Status row styling - inline question and answer */
-.status-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin: 20px 0;
-  padding: 15px 20px;
-  background-color: #f5f5f5;
-  border-radius: 8px;
-}
-
-.status-row span {
-  font-size: 20px;
-  font-weight: bold;
-  color: #333;
-}
-
-.status-row select {
-  width: 200px;
-  font-size: 18px;
-  padding: 8px;
-  text-align: center;
-  text-align-last: center;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  background-color: white;
-}
-
-/* Stock items - card style similar to closing form */
-.stock-item {
-  border: 1px solid #ddd;
-  padding: 20px;
-  margin: 15px 0;
-  border-radius: 8px;
-  background-color: #f9f9f9;
-}
-
-.stock-item .pizza-name {
-  font-size: 24px;
-  font-weight: bold;
-  margin-bottom: 15px;
-  color: #333;
-}
-
-.stock-inputs {
-  display: flex;
-  justify-content: center;
-  gap: 30px;
-  align-items: center;
-}
-
-.stock-input-group {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.stock-input-group label {
-  font-size: 16px;
-  margin-bottom: 5px;
-  color: #666;
-}
-
-.stock-input-group input {
-  font-size: 20px;
-  padding: 8px;
-  width: 100px;
-  text-align: center;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
-
-/* Input styling */
-input[type="number"] {
-  -moz-appearance: textfield;
-  appearance: textfield;
-}
-
-input[type="number"]::-webkit-inner-spin-button,
-input[type="number"]::-webkit-outer-spin-button {
-  -webkit-appearance: none;
+html, body {
+  touch-action: manipulation;
+  -ms-touch-action: manipulation;
+  overscroll-behavior: contain;
   margin: 0;
+  padding: 0;
 }
 
-input:focus::placeholder {
-  color: transparent;
-}
-
-.bigInput{
-  font-size:22px;
-  width:250px;
-  text-align:center;
-  margin:20px auto 15px;
-  padding:8px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
-
-button{
-  margin-top:20px;
-  font-size:22px;
-  padding:12px 24px;
-  cursor:pointer;
-  background-color:#4CAF50;
-  color:white;
-  border:none;
-  border-radius:5px;
-  transition: all 0.3s;
-}
-
-button:hover:not(:disabled) {
-  background-color:#45a049;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-}
-
-button:disabled{
-  opacity:0.5;
-  cursor:not-allowed;
-}
-
-button.tabBtn{
-  background-color:#2196F3;
-}
-
-button.tabBtn:hover {
-  background-color:#1976D2;
-}
-
-.hidden{
-  display:none;
-}
-
-.bold{
-  font-weight:bold;
-}
-
-#lastUpdate, #lastClosingUpdate{
-  margin-top:15px;
-  font-size:16px;
-  color:#666;
-}
-
-#dropData{
-  display:grid;
-  grid-template-columns: auto 80px;
-  justify-content:center;
-  gap:8px 30px;
-  margin-top:20px;
-}
-
-#dropData .header{
-  font-weight:bold;
-  font-size:22px;
-  padding-bottom:10px;
-}
-
-#dropData .cell{
-  text-align:left;
-  font-size:20px;
-}
-
-#dropData .cell.qty{
-  text-align:right;
-  font-size:20px;
-}
-
-/* CLOSING FORM STYLES */
-.closing-item {
-  border: 1px solid #ddd;
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+  font-size: 18px;
   padding: 20px;
-  margin: 15px 0;
-  border-radius: 8px;
-  background-color: #f9f9f9;
+  text-align: center;
+  background: #f5f5f5;
+  min-height: 100vh;
 }
 
-.closing-item .pizza-name {
-  font-size: 24px;
-  font-weight: bold;
-  margin-bottom: 15px;
+.container {
+  max-width: 700px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 15px;
+  padding: 25px 20px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.logo {
+  width: 180px;
+  display: block;
+  margin: 0 auto 15px;
+}
+
+.title {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 5px;
   color: #333;
 }
 
-.status-selector {
+.subtitle {
+  color: #e63946;
+  font-size: 14px;
+  margin-bottom: 15px;
+  font-weight: 500;
+}
+
+.date {
+  font-size: 16px;
+  color: #666;
   margin-bottom: 20px;
 }
 
-.status-option {
-  display: inline-block;
-  margin: 0 15px;
+/* Tabs Styles */
+.tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 30px;
+  border-bottom: 2px solid #e0e0e0;
 }
 
-.status-option label {
+.tab {
+  flex: 1;
+  padding: 15px 20px;
+  background: none;
+  border: none;
+  font-size: 16px;
+  font-weight: 600;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.3s;
+  border-radius: 8px 8px 0 0;
+  position: relative;
+  bottom: -2px;
+}
+
+.tab:hover {
+  background: #f0f0f0;
+  color: #333;
+}
+
+.tab.active {
+  color: #e63946;
+  border-bottom: 3px solid #e63946;
+}
+
+/* Tab Content */
+.section {
+  display: none;
+}
+
+.section.active {
+  display: block;
+}
+
+/* Form Styles */
+.user-section {
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.user-label {
+  display: block;
+  font-size: 16px;
+  font-weight: 600;
+  color: #555;
+  margin-bottom: 8px;
+}
+
+.user-input {
+  width: 100%;
+  padding: 12px 15px;
   font-size: 18px;
-  margin-left: 8px;
-  cursor: pointer;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  transition: border-color 0.3s;
 }
 
-.status-option input[type="radio"] {
-  transform: scale(1.3);
-  margin-right: 5px;
-  cursor: pointer;
+.user-input:focus {
+  outline: none;
+  border-color: #e63946;
 }
 
-.waste-section, .sellout-section {
-  margin-top: 15px;
+.user-input:disabled {
+  background: #f5f5f5;
+  color: #999;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Forecast Card - Unified */
+.forecast-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 25px;
+  color: white;
+}
+
+.forecast-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.forecast-label span {
+  font-size: 24px;
+}
+
+.forecast-select {
+  width: 100%;
+  padding: 14px 15px;
+  font-size: 18px;
+  border: none;
+  border-radius: 8px;
+  background: white;
+  color: #333;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s;
+}
+
+.forecast-select option:first-child {
+  color: #999;
+}
+
+.forecast-select:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255,255,255,0.3);
+}
+
+.forecast-select:disabled {
+  background: #f5f5f5;
+  color: #999;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Section Title */
+.section-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #333;
+  text-align: left;
+  margin: 25px 0 15px 0;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #e63946;
+  display: inline-block;
+}
+
+/* Items Grid - Card Style */
+.items-grid {
+  margin: 20px 0;
+}
+
+.stock-item, .closing-item {
+  background: #fafafa;
+  border-radius: 12px;
   padding: 15px;
-  border-radius: 5px;
+  margin-bottom: 12px;
+  border: 1px solid #eee;
+  transition: all 0.3s;
 }
 
-.waste-section {
-  background-color: #fff3e0;
+.stock-item:hover, .closing-item:hover {
+  background: #f5f5f5;
+  transform: translateX(5px);
+  border-color: #e63946;
 }
 
-.sellout-section {
-  background-color: #e8f5e9;
+.pizza-name {
+  font-weight: 700;
+  font-size: 18px;
+  color: #333;
+  margin-bottom: 15px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
 
-.waste-inputs {
+.pizza-name::before {
+  content: "🍕";
+}
+
+/* Input Groups - With + and - buttons */
+.stock-inputs, .waste-inputs {
   display: flex;
   justify-content: center;
   gap: 30px;
   align-items: center;
+  flex-wrap: wrap;
 }
 
-.waste-input-group {
+.stock-input-group, .waste-input-group {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-.waste-input-group label {
-  font-size: 16px;
+.stock-input-group label, .waste-input-group label {
+  font-size: 14px;
   margin-bottom: 5px;
   color: #666;
+  font-weight: 500;
 }
 
-.waste-input-group input {
+.input-with-buttons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.input-with-buttons button {
+  width: 36px;
+  height: 40px;
   font-size: 20px;
-  padding: 8px;
-  width: 100px;
+  font-weight: bold;
+  border: none;
+  background: #e63946;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-top: 0;
+  padding: 0;
+}
+
+.input-with-buttons button:hover:not(:disabled) {
+  background: #c1121f;
+  transform: scale(1.05);
+}
+
+.input-with-buttons button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.input-with-buttons input {
+  width: 80px;
+  padding: 10px;
+  font-size: 18px;
   text-align: center;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  transition: border-color 0.3s;
+  background: white;
+}
+
+.input-with-buttons input:focus {
+  outline: none;
+  border-color: #e63946;
+}
+
+.input-with-buttons input:disabled {
+  background: #f5f5f5;
+  color: #999;
+}
+
+/* Status Selector - Centered */
+.status-selector {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+}
+
+.status-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.status-option input[type="radio"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: #e63946;
+}
+
+.status-option span {
+  font-size: 16px;
+  cursor: pointer;
+  color: #555;
+}
+
+/* Waste & Sellout Sections - Centered */
+.waste-section, .sellout-section {
+  margin-top: 15px;
+  padding: 15px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.waste-section {
+  background: #fff3e0;
+  border-left: 4px solid #ff9800;
+}
+
+.sellout-section {
+  background: #e8f5e9;
+  border-left: 4px solid #4caf50;
+}
+
+.sellout-section label {
+  display: inline-block;
+  margin-right: 10px;
+  font-size: 16px;
+  font-weight: 500;
+  color: #555;
 }
 
 .sellout-section input {
-  font-size: 20px;
-  padding: 8px;
-  width: 150px;
-  text-align: center;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
-
-.note {
-  font-size: 14px;
-  color: #666;
-  margin-top: 10px;
-  font-style: italic;
-}
-
-/* General note section */
-.general-note-section {
-  margin-top: 30px;
-  padding: 20px;
-  background-color: #f0f7ff;
+  padding: 10px;
+  font-size: 18px;
+  border: 2px solid #ddd;
   border-radius: 8px;
-  border: 1px solid #b3d9ff;
+  width: 150px;
+}
+
+.sellout-section input:focus {
+  outline: none;
+  border-color: #4caf50;
+}
+
+/* General Note Section */
+.general-note-section {
+  margin-top: 25px;
+  padding: 20px;
+  background: #f0f7ff;
+  border-radius: 12px;
+  border-left: 4px solid #2196f3;
 }
 
 .general-note-section label {
-  font-size: 20px;
-  font-weight: bold;
-  display: block;
-  margin-bottom: 10px;
+  font-size: 16px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 12px;
   color: #333;
 }
 
@@ -335,33 +404,200 @@ button.tabBtn:hover {
   min-height: 80px;
   padding: 12px;
   font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
   resize: vertical;
-  font-family: Arial, sans-serif;
-  box-sizing: border-box;
+  font-family: inherit;
+  transition: border-color 0.3s;
 }
 
 .general-note-section textarea:focus {
   outline: none;
-  border-color: #2196F3;
-  box-shadow: 0 0 5px rgba(33,150,243,0.3);
+  border-color: #2196f3;
+}
+
+/* Drop Data Grid */
+.drop-grid {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.drop-header {
+  font-weight: 700;
+  font-size: 18px;
+  padding: 10px;
+  background: #f5f5f5;
+  border-radius: 8px;
+  color: #333;
+  text-align: center;
+}
+
+.drop-cell {
+  padding: 10px;
+  background: #fafafa;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.drop-cell.qty {
+  text-align: center;
+  font-weight: 600;
+  color: #e63946;
+}
+
+/* Action Buttons */
+.btn-primary {
+  width: 100%;
+  padding: 15px;
+  font-size: 20px;
+  font-weight: 600;
+  background: #e63946;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-top: 20px;
+  position: relative;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: #c1121f;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(230, 57, 70, 0.3);
+}
+
+.btn-primary:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.btn-primary.loading {
+  color: transparent;
+}
+
+.btn-primary.loading::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 24px;
+  height: 24px;
+  margin-left: -12px;
+  margin-top: -12px;
+  border: 3px solid rgba(255,255,255,0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.btn-secondary {
+  width: 100%;
+  padding: 12px;
+  font-size: 18px;
+  background: #4a90e2;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-top: 10px;
+}
+
+.btn-secondary:hover {
+  background: #357abd;
+  transform: translateY(-2px);
+}
+
+.btn-refresh {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  background: #4a90e2;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-top: 15px;
+}
+
+.btn-refresh:hover {
+  background: #357abd;
+}
+
+/* Status Messages */
+.last-submission-info {
+  margin: 15px 0;
+  padding: 12px 15px;
+  background: #fff3e0;
+  border-left: 4px solid #e63946;
+  border-radius: 8px;
+  text-align: left;
+  font-size: 14px;
+  color: #e65100;
+}
+
+.note {
+  font-size: 13px;
+  color: #888;
+  margin-top: 8px;
+  font-style: italic;
+  text-align: center;
+}
+
+.hidden {
+  display: none;
 }
 
 /* Responsive */
 @media (max-width: 600px) {
-  .waste-inputs, .stock-inputs {
+  body {
+    padding: 10px;
+  }
+  
+  .container {
+    padding: 15px;
+  }
+  
+  .stock-inputs, .waste-inputs {
     flex-direction: column;
     gap: 15px;
   }
   
-  .status-row {
-    flex-direction: column;
-    gap: 10px;
+  .input-with-buttons button {
+    width: 32px;
+    height: 36px;
+    font-size: 18px;
   }
   
-  .status-row select {
-    width: 100%;
+  .input-with-buttons input {
+    width: 70px;
+  }
+  
+  .tab {
+    padding: 12px 10px;
+    font-size: 14px;
+  }
+  
+  .forecast-card {
+    padding: 15px;
+  }
+  
+  .status-selector {
+    gap: 20px;
+  }
+  
+  .sellout-section label {
+    display: block;
+    margin-bottom: 8px;
   }
 }
 </style>
@@ -369,110 +605,127 @@ button.tabBtn:hover {
 
 <body>
 
-<img src="icon.png" class="logo" alt="Merrion Shop Logo" onerror="this.style.display='none'">
-
-<div class="title">MERRION SHOP</div>
-<div id="todayDate" class="date"></div>
-
-<button class="tabBtn" onclick="showTab('stock')">Stock Form</button>
-<button class="tabBtn" onclick="showTab('drop')">Last Drop</button>
-<button class="tabBtn" onclick="showTab('closing')">Closing Form</button>
-
-<!-- STOCK FORM - REDESIGNED WITH CARDS -->
-<div id="stock" class="section">
-
-<input id="stockUser" class="bigInput" placeholder="Your name" autocomplete="off">
-
-<div class="left">
-
-<div class="status-row">
-  <span>Weather Forecast</span>
-  <select id="weather">
-    <option value="">Select weather...</option>
-    <option>Sunny</option>
-    <option>Cloudy</option>
-    <option>Rainy</option>
-    <option>Storm</option>
-  </select>
-</div>
-
-<div class="status-row">
-  <span>How's today going?</span>
-  <select id="traffic">
-    <option value="">Select traffic...</option>
-    <option>Quiet</option>
-    <option>Normal</option>
-    <option>Busy</option>
-  </select>
-</div>
-
-<h3 style="text-align:center; margin-top:30px;">Stock Info</h3>
-
-<div id="stockForm"></div>
-
-<button id="submitStockBtn" onclick="submitStock()">Submit Stock</button>
-<button id="newBtn" class="hidden" onclick="resetForm()">New Submit</button>
-<div id="lastUpdate" class="hidden"></div>
-
-</div>
-</div>
-
-<!-- DROP SECTION -->
-<div id="drop" class="section">
-  <h3>Last Drop Info</h3>
-  <div id="dropData">
-    <div class="header cell">Pizza</div>
-    <div class="header cell qty">QTY</div>
+<div class="container">
+  <img src="icon.png" class="logo" alt="Merrion Shop Logo" onerror="this.style.display='none'">
+  
+  <div class="title">🍕 MERRION SHOP</div>
+  <div class="subtitle">Daily Management System</div>
+  <div id="todayDate" class="date"></div>
+  
+  <!-- Tabs Navigation -->
+  <div class="tabs">
+    <button class="tab" onclick="showTab('stock')">📦 Stock Form</button>
+    <button class="tab" onclick="showTab('drop')">📋 Last Drop</button>
+    <button class="tab" onclick="showTab('closing')">📝 Closing Form</button>
   </div>
-  <button onclick="loadDrop()" style="margin-top:20px;">Refresh Data</button>
-</div>
-
-<!-- CLOSING FORM -->
-<div id="closing" class="section">
-
-  <input id="closingUser" class="bigInput" placeholder="Your name" autocomplete="off">
-
-  <div class="left">
-    <h3 style="text-align:center;">End of Day Report</h3>
-    <p style="color:#666; margin-bottom:20px;">For each pizza, indicate if it sold out or if there was waste</p>
-
-    <div id="closingForm"></div>
+  
+  <!-- STOCK FORM -->
+  <div id="stock" class="section">
+    <div class="user-section">
+      <label class="user-label">👤 Your Name:</label>
+      <input type="text" id="stockUser" class="user-input" placeholder="Enter your name" autocomplete="off">
+    </div>
+    
+    <!-- Unified Forecast Card - No default option -->
+    <div class="forecast-card">
+      <div class="forecast-label">
+        <span>📊</span> Forecast:
+      </div>
+      <select id="forecast" class="forecast-select">
+        <option value="" disabled selected>-- Select forecast --</option>
+        <option value="Evening Event / Busy">🎊 Evening Event / Busy</option>
+        <option value="Normal day / Good weather">☀️ Normal day / Good weather</option>
+        <option value="Rain and storm coming">🌧️ Rain and storm coming</option>
+      </select>
+    </div>
+    
+    <div class="section-title">📦 Stock Info</div>
+    
+    <div id="stockForm" class="items-grid"></div>
+    
+    <button id="submitStockBtn" class="btn-primary" onclick="submitStock()">📤 SUBMIT STOCK</button>
+    <button id="newBtn" class="btn-secondary hidden" onclick="resetForm()">🔄 NEW SUBMISSION</button>
+    <div id="lastUpdate" class="last-submission-info hidden"></div>
+  </div>
+  
+  <!-- DROP SECTION -->
+  <div id="drop" class="section">
+    <div class="section-title">📋 Last Drop Info</div>
+    <div id="dropData" class="drop-grid">
+      <div class="drop-header">🍕 Pizza</div>
+      <div class="drop-header">📦 QTY</div>
+    </div>
+    <button class="btn-refresh" onclick="loadDrop()">🔄 Refresh Data</button>
+  </div>
+  
+  <!-- CLOSING FORM -->
+  <div id="closing" class="section">
+    <div class="user-section">
+      <label class="user-label">👤 Your Name:</label>
+      <input type="text" id="closingUser" class="user-input" placeholder="Enter your name" autocomplete="off">
+    </div>
+    
+    <div class="section-title">📝 End of Day Report</div>
+    <div class="note" style="margin-bottom: 15px;">For each pizza, indicate if it sold out or if there was waste</div>
+    
+    <div id="closingForm" class="items-grid"></div>
     
     <!-- General notes field -->
     <div class="general-note-section">
-      <label for="generalNote">Additional Notes:</label>
+      <label><span>📝</span> Additional Notes:</label>
       <textarea id="generalNote" placeholder="Any additional comments about today's service..."></textarea>
     </div>
-
-    <button id="submitClosingBtn" onclick="submitClosing()">Submit End of Day Report</button>
-    <button id="newClosingBtn" class="hidden" onclick="resetClosingForm()">New Report</button>
-    <div id="lastClosingUpdate" class="hidden"></div>
+    
+    <button id="submitClosingBtn" class="btn-primary" onclick="submitClosing()">📤 SUBMIT REPORT</button>
+    <button id="newClosingBtn" class="btn-secondary hidden" onclick="resetClosingForm()">🔄 NEW REPORT</button>
+    <div id="lastClosingUpdate" class="last-submission-info hidden"></div>
   </div>
 </div>
 
 <script>
-const URL = "https://script.google.com/macros/s/AKfycbwAsjdtQi-Z4SekT-bJIHJPSxkzPVtulT5PmT6BHc2nGS68EFXaG5l5UGsqk8mgD3sr/exec";
+const URL = "https://script.google.com/macros/s/AKfycbzsBTCrlAk7hOXuH5JEUHOLv7O3mds-cmU2w7GcEstV4lpelxgJ7o5YfIH9vmeN6wcp/exec";
 
 /* ===============================
    INPUT UTILITIES
 =============================== */
-// Function to improve number input experience
-function setupNumberInput(input) {
-  // When input gets focus, if value is 0, select it all
+function setupNumberInput(input, minusBtn, plusBtn) {
+  // Function to update value
+  const updateValue = (delta) => {
+    if (input.disabled) return;
+    let current = parseInt(input.value) || 0;
+    current = Math.max(0, current + delta);
+    input.value = current;
+    // Trigger input event
+    const event = new Event('input', { bubbles: true });
+    input.dispatchEvent(event);
+  };
+  
+  // Add event listeners to buttons
+  if (minusBtn) {
+    minusBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      updateValue(-1);
+    });
+  }
+  if (plusBtn) {
+    plusBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      updateValue(1);
+    });
+  }
+  
   input.addEventListener('focus', function() {
     if (this.value === '0') {
       this.select();
     }
   });
   
-  // When clicked, select all if it's 0
   input.addEventListener('click', function() {
     if (this.value === '0') {
       this.select();
     }
   });
   
-  // Prevent non-numeric characters
   input.addEventListener('keypress', function(e) {
     const char = String.fromCharCode(e.which);
     if (!/[0-9]/.test(char)) {
@@ -480,7 +733,6 @@ function setupNumberInput(input) {
     }
   });
   
-  // Reset to 0 if empty on blur
   input.addEventListener('blur', function() {
     if (this.value === '' || this.value === null) {
       this.value = '0';
@@ -505,7 +757,21 @@ function setDate(){
 /* ===============================
    TAB CONTROL
 =============================== */
+function setActiveTab(tabName) {
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.classList.remove('active');
+  });
+  
+  const tabs = document.querySelectorAll('.tab');
+  const tabMap = { 'stock': 0, 'drop': 1, 'closing': 2 };
+  if (tabs[tabMap[tabName]]) {
+    tabs[tabMap[tabName]].classList.add('active');
+  }
+}
+
 function showTab(tab){
+  setActiveTab(tab);
+  
   document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
   document.getElementById(tab).classList.add("active");
 
@@ -525,7 +791,7 @@ function showTab(tab){
 }
 
 /* ===============================
-   STOCK FORM FUNCTIONS - CARD STYLE
+   STOCK FORM FUNCTIONS
 =============================== */
 
 async function loadPizzas(){
@@ -546,23 +812,35 @@ async function loadPizzas(){
         <div class="pizza-name">${p}</div>
         <div class="stock-inputs">
           <div class="stock-input-group">
-            <label>Whole Pies</label>
-            <input type="number" id="whole_${pizzaName}" class="whole" min="0" value="0" placeholder="0">
+            <label>🍕 Whole Pies</label>
+            <div class="input-with-buttons">
+              <button class="minus-whole" data-pizza="${pizzaName}" type="button">−</button>
+              <input type="number" id="whole_${pizzaName}" class="whole" min="0" value="0" placeholder="0">
+              <button class="plus-whole" data-pizza="${pizzaName}" type="button">+</button>
+            </div>
           </div>
           <div class="stock-input-group">
-            <label>Slices</label>
-            <input type="number" id="slice_${pizzaName}" class="slice" min="0" max="7" step="1" value="0" placeholder="0">
+            <label>🔪 Slices</label>
+            <div class="input-with-buttons">
+              <button class="minus-slice" data-pizza="${pizzaName}" type="button">−</button>
+              <input type="number" id="slice_${pizzaName}" class="slice" min="0" max="7" step="1" value="0" placeholder="0">
+              <button class="plus-slice" data-pizza="${pizzaName}" type="button">+</button>
+            </div>
           </div>
         </div>
       `;
       
       formDiv.appendChild(itemDiv);
       
-      // Setup number inputs
       const wholeInput = document.getElementById(`whole_${pizzaName}`);
       const sliceInput = document.getElementById(`slice_${pizzaName}`);
-      setupNumberInput(wholeInput);
-      setupNumberInput(sliceInput);
+      const minusWhole = itemDiv.querySelector('.minus-whole');
+      const plusWhole = itemDiv.querySelector('.plus-whole');
+      const minusSlice = itemDiv.querySelector('.minus-slice');
+      const plusSlice = itemDiv.querySelector('.plus-slice');
+      
+      setupNumberInput(wholeInput, minusWhole, plusWhole);
+      setupNumberInput(sliceInput, minusSlice, plusSlice);
     });
 
     const saved = JSON.parse(localStorage.getItem("lastStockSubmit") || "{}");
@@ -577,8 +855,7 @@ async function loadPizzas(){
         if(elSlice) elSlice.value = slice;
       });
       if(saved.user) document.getElementById("stockUser").value = saved.user;
-      if(saved.weather) document.getElementById("weather").value = saved.weather;
-      if(saved.traffic) document.getElementById("traffic").value = saved.traffic;
+      if(saved.forecast) document.getElementById("forecast").value = saved.forecast;
       if(saved.timestamp) showLastUpdate(saved.timestamp);
       
       document.getElementById("newBtn").classList.remove("hidden");
@@ -592,27 +869,31 @@ async function loadPizzas(){
 
 function disableStockForm(){
   document.getElementById("stockUser").disabled = true;
-  document.getElementById("weather").disabled = true;
-  document.getElementById("traffic").disabled = true;
+  document.getElementById("forecast").disabled = true;
   document.querySelectorAll("#stockForm input").forEach(input => input.disabled = true);
+  document.querySelectorAll("#stockForm button").forEach(btn => btn.disabled = true);
   document.getElementById("submitStockBtn").disabled = true;
 }
 
 function enableStockForm(){
   document.getElementById("stockUser").disabled = false;
-  document.getElementById("weather").disabled = false;
-  document.getElementById("traffic").disabled = false;
+  document.getElementById("forecast").disabled = false;
   document.querySelectorAll("#stockForm input").forEach(input => input.disabled = false);
+  document.querySelectorAll("#stockForm button").forEach(btn => btn.disabled = false);
   document.getElementById("submitStockBtn").disabled = false;
 }
 
 async function submitStock(){
   const user = document.getElementById("stockUser").value.trim();
-  const weather = document.getElementById("weather").value;
-  const traffic = document.getElementById("traffic").value;
+  const forecast = document.getElementById("forecast").value;
 
-  if(!user || !weather || !traffic){
-    alert("Please complete all fields (name, weather, and traffic)");
+  if(!user){
+    alert("Please enter your name");
+    return;
+  }
+  
+  if(!forecast){
+    alert("Please select a forecast option");
     return;
   }
 
@@ -647,19 +928,22 @@ async function submitStock(){
     return; 
   }
   
-  if(!confirm("Are you sure you want to submit this stock data?")) return;
+  if(!confirm(`Confirm stock submission?\n\n👤 Staff: ${user}\n📊 Forecast: ${forecast}`)) return;
 
   try {
     disableStockForm();
+    const submitBtn = document.getElementById("submitStockBtn");
+    submitBtn.classList.add('loading');
 
     const res = await fetch(`${URL}?action=submitStock&data=${encodeURIComponent(JSON.stringify({
-      user, weather, traffic, pizzas: pizzaData
+      user, forecast, pizzas: pizzaData
     }))}`);
     
     if (!res.ok) throw new Error('Submission failed');
     const data = await res.json();
 
-    alert("Stock data submitted successfully!");
+    submitBtn.classList.remove('loading');
+    alert("✅ Stock data submitted successfully!");
 
     const savedPizzas = pizzaData.map(p => ({
       name: p.name,
@@ -667,13 +951,14 @@ async function submitStock(){
     }));
     
     localStorage.setItem("lastStockSubmit", JSON.stringify({
-      user, weather, traffic, pizzas: savedPizzas, timestamp: data.timestamp
+      user, forecast, pizzas: savedPizzas, timestamp: data.timestamp
     }));
 
     showLastUpdate(data.timestamp);
     document.getElementById("newBtn").classList.remove("hidden");
   } catch (error) {
     console.error('Error submitting stock:', error);
+    document.getElementById("submitStockBtn").classList.remove('loading');
     alert('Error submitting data. Please try again.');
     enableStockForm();
   }
@@ -691,8 +976,7 @@ function getOriginalPizzaName(encodedName) {
 function resetForm(){
   if(confirm("Are you sure you want to start a new stock form? This will clear all current data.")){
     document.getElementById("stockUser").value = "";
-    document.getElementById("weather").value = "";
-    document.getElementById("traffic").value = "";
+    document.getElementById("forecast").value = "";
     document.querySelectorAll("#stockForm input").forEach(input => input.value = "0");
     
     enableStockForm();
@@ -709,7 +993,7 @@ function showLastUpdate(timestamp){
   const d = new Date(timestamp);
   const text = d.toLocaleDateString('en-GB') + " at " + d.toLocaleTimeString('en-GB', {hour:'2-digit', minute:'2-digit'});
   const el = document.getElementById("lastUpdate");
-  el.innerText = "Last submitted: " + text;
+  el.innerHTML = `📋 Last submitted: ${text}`;
   el.classList.remove("hidden");
 }
 
@@ -720,20 +1004,20 @@ async function loadDrop(){
     const data = await res.json();
     
     const div = document.getElementById("dropData");
-    div.innerHTML = `<div class="header cell">Pizza</div><div class="header cell qty">QTY</div>`;
+    div.innerHTML = `<div class="drop-header">🍕 Pizza</div><div class="drop-header">📦 QTY</div>`;
     
     if(data.length === 0){
-      div.innerHTML += `<div class="cell" style="grid-column:1/-1;text-align:center;">No drop data available</div>`;
+      div.innerHTML += `<div class="drop-cell" style="grid-column:1/-1;text-align:center;">No drop data available</div>`;
     } else {
       data.forEach(d=>{
-        div.innerHTML += `<div class="cell">${d.pizza || 'Unknown'}</div><div class="cell qty">${d.lastDrop || 0}</div>`;
+        div.innerHTML += `<div class="drop-cell">${d.pizza || 'Unknown'}</div><div class="drop-cell qty">${d.lastDrop || 0}</div>`;
       });
     }
   } catch (error) {
     console.error('Error loading drop data:', error);
     const div = document.getElementById("dropData");
-    div.innerHTML = `<div class="header cell">Pizza</div><div class="header cell qty">QTY</div>`;
-    div.innerHTML += `<div class="cell" style="grid-column:1/-1;text-align:center;color:red;">Error loading data</div>`;
+    div.innerHTML = `<div class="drop-header">🍕 Pizza</div><div class="drop-header">📦 QTY</div>`;
+    div.innerHTML += `<div class="drop-cell" style="grid-column:1/-1;text-align:center;color:red;">❌ Error loading data</div>`;
   }
 }
 
@@ -759,32 +1043,40 @@ async function loadClosing(){
         <div class="pizza-name">${p}</div>
         
         <div class="status-selector">
-          <span class="status-option">
+          <label class="status-option">
             <input type="radio" name="status_${pizzaName}" id="waste_${pizzaName}" value="waste" checked>
-            <label for="waste_${pizzaName}">Had Waste</label>
-          </span>
-          <span class="status-option">
+            <span>⚠️ Had Waste</span>
+          </label>
+          <label class="status-option">
             <input type="radio" name="status_${pizzaName}" id="soldout_${pizzaName}" value="soldout">
-            <label for="soldout_${pizzaName}">Sold Out</label>
-          </span>
+            <span>✅ Sold Out</span>
+          </label>
         </div>
         
         <div id="wasteSection_${pizzaName}" class="waste-section">
           <div class="waste-inputs">
             <div class="waste-input-group">
-              <label>Whole Pies</label>
-              <input type="number" id="wasteWhole_${pizzaName}" min="0" value="0" placeholder="0">
+              <label>🍕 Whole Pies</label>
+              <div class="input-with-buttons">
+                <button class="minus-waste-whole" data-pizza="${pizzaName}" type="button">−</button>
+                <input type="number" id="wasteWhole_${pizzaName}" min="0" value="0" placeholder="0">
+                <button class="plus-waste-whole" data-pizza="${pizzaName}" type="button">+</button>
+              </div>
             </div>
             <div class="waste-input-group">
-              <label>Slices</label>
-              <input type="number" id="wasteSlice_${pizzaName}" min="0" max="7" value="0" placeholder="0">
+              <label>🔪 Slices</label>
+              <div class="input-with-buttons">
+                <button class="minus-waste-slice" data-pizza="${pizzaName}" type="button">−</button>
+                <input type="number" id="wasteSlice_${pizzaName}" min="0" max="7" value="0" placeholder="0">
+                <button class="plus-waste-slice" data-pizza="${pizzaName}" type="button">+</button>
+              </div>
             </div>
           </div>
           <div class="note">Enter the amount left at end of day</div>
         </div>
         
         <div id="selloutSection_${pizzaName}" class="sellout-section hidden">
-          <label>Sold out at:</label>
+          <label>⏰ Sold out at:</label>
           <input type="time" id="sellout_${pizzaName}" value="">
           <div class="note">Time when the last slice was sold</div>
         </div>
@@ -792,13 +1084,16 @@ async function loadClosing(){
       
       formDiv.appendChild(itemDiv);
       
-      // Setup number inputs
       const wasteWhole = document.getElementById(`wasteWhole_${pizzaName}`);
       const wasteSlice = document.getElementById(`wasteSlice_${pizzaName}`);
-      setupNumberInput(wasteWhole);
-      setupNumberInput(wasteSlice);
+      const minusWhole = itemDiv.querySelector('.minus-waste-whole');
+      const plusWhole = itemDiv.querySelector('.plus-waste-whole');
+      const minusSlice = itemDiv.querySelector('.minus-waste-slice');
+      const plusSlice = itemDiv.querySelector('.plus-waste-slice');
       
-      // Add event listeners for radio buttons
+      setupNumberInput(wasteWhole, minusWhole, plusWhole);
+      setupNumberInput(wasteSlice, minusSlice, plusSlice);
+      
       const wasteRadio = document.getElementById(`waste_${pizzaName}`);
       const soldoutRadio = document.getElementById(`soldout_${pizzaName}`);
       const wasteSection = document.getElementById(`wasteSection_${pizzaName}`);
@@ -818,14 +1113,12 @@ async function loadClosing(){
       });
     });
 
-    // Load saved data if exists
     const saved = JSON.parse(localStorage.getItem("lastClosingSubmit") || "{}");
     if(saved.pizzas && saved.user){
       saved.pizzas.forEach(p => {
         const pizzaName = p.name.replace(/[^a-zA-Z0-9]/g, '_');
         
         if(p.selloutTime) {
-          // Was sold out
           const soldoutRadio = document.getElementById(`soldout_${pizzaName}`);
           if(soldoutRadio) {
             soldoutRadio.checked = true;
@@ -834,7 +1127,6 @@ async function loadClosing(){
             document.getElementById(`sellout_${pizzaName}`).value = p.selloutTime;
           }
         } else if(p.waste !== undefined) {
-          // Had waste
           const wasteRadio = document.getElementById(`waste_${pizzaName}`);
           if(wasteRadio) {
             wasteRadio.checked = true;
@@ -860,24 +1152,16 @@ async function loadClosing(){
 function disableClosingForm(){
   document.getElementById("closingUser").disabled = true;
   document.getElementById("generalNote").disabled = true;
-  
-  // Disable all inputs and radios in closing form
-  document.querySelectorAll("#closingForm input, #closingForm button").forEach(el => {
-    if(el.id !== 'newClosingBtn') el.disabled = true;
-  });
-  
+  document.querySelectorAll("#closingForm input").forEach(el => el.disabled = true);
+  document.querySelectorAll("#closingForm button").forEach(btn => btn.disabled = true);
   document.getElementById("submitClosingBtn").disabled = true;
 }
 
 function enableClosingForm(){
   document.getElementById("closingUser").disabled = false;
   document.getElementById("generalNote").disabled = false;
-  
-  // Enable all inputs and radios in closing form
-  document.querySelectorAll("#closingForm input, #closingForm button").forEach(el => {
-    el.disabled = false;
-  });
-  
+  document.querySelectorAll("#closingForm input").forEach(el => el.disabled = false);
+  document.querySelectorAll("#closingForm button").forEach(btn => btn.disabled = false);
   document.getElementById("submitClosingBtn").disabled = false;
 }
 
@@ -903,7 +1187,6 @@ async function submitClosing(){
     const isWaste = document.getElementById(`waste_${pizzaName}`).checked;
     
     if(isWaste) {
-      // Validate waste
       const wasteWhole = document.getElementById(`wasteWhole_${pizzaName}`);
       const wasteSlice = document.getElementById(`wasteSlice_${pizzaName}`);
       
@@ -929,7 +1212,6 @@ async function submitClosing(){
         selloutTime: null
       });
     } else {
-      // Validate sellout
       const selloutTime = document.getElementById(`sellout_${pizzaName}`);
       
       if(!selloutTime.value) {
@@ -948,10 +1230,12 @@ async function submitClosing(){
 
   if(!valid) return;
   
-  if(!confirm("Are you sure you want to submit this end of day report?")) return;
+  if(!confirm(`Confirm end of day report?\n\n👤 Staff: ${user}`)) return;
 
   try {
     disableClosingForm();
+    const submitBtn = document.getElementById("submitClosingBtn");
+    submitBtn.classList.add('loading');
 
     const res = await fetch(`${URL}?action=submitClosing&data=${encodeURIComponent(JSON.stringify({
       user, 
@@ -962,7 +1246,8 @@ async function submitClosing(){
     if (!res.ok) throw new Error('Submission failed');
     const data = await res.json();
 
-    alert("End of day report submitted successfully!");
+    submitBtn.classList.remove('loading');
+    alert("✅ End of day report submitted successfully!");
 
     localStorage.setItem("lastClosingSubmit", JSON.stringify({
       user, 
@@ -975,6 +1260,7 @@ async function submitClosing(){
     document.getElementById("newClosingBtn").classList.remove("hidden");
   } catch (error) {
     console.error('Error submitting closing data:', error);
+    document.getElementById("submitClosingBtn").classList.remove('loading');
     alert('Error submitting data. Please try again.');
     enableClosingForm();
   }
@@ -985,19 +1271,16 @@ function resetClosingForm(){
     document.getElementById("closingUser").value = "";
     document.getElementById("generalNote").value = "";
     
-    // Reset all items to waste with 0 values
     document.querySelectorAll(".closing-item").forEach(item => {
       const pizzaNameElement = item.querySelector('.pizza-name');
       if(!pizzaNameElement) return;
       
       const pizzaName = pizzaNameElement.textContent.replace(/[^a-zA-Z0-9]/g, '_');
       
-      // Set to waste mode
       document.getElementById(`waste_${pizzaName}`).checked = true;
       document.getElementById(`wasteSection_${pizzaName}`).classList.remove('hidden');
       document.getElementById(`selloutSection_${pizzaName}`).classList.add('hidden');
       
-      // Clear values
       document.getElementById(`wasteWhole_${pizzaName}`).value = '0';
       document.getElementById(`wasteSlice_${pizzaName}`).value = '0';
       document.getElementById(`sellout_${pizzaName}`).value = '';
@@ -1017,7 +1300,7 @@ function showLastClosingUpdate(timestamp){
   const d = new Date(timestamp);
   const text = d.toLocaleDateString('en-GB') + " at " + d.toLocaleTimeString('en-GB', {hour:'2-digit', minute:'2-digit'});
   const el = document.getElementById("lastClosingUpdate");
-  el.innerText = "Last submitted: " + text;
+  el.innerHTML = `📋 Last submitted: ${text}`;
   el.classList.remove("hidden");
 }
 
@@ -1028,7 +1311,6 @@ setDate();
 document.querySelector('.logo').addEventListener('error', function() {
   this.style.display = 'none';
 });
-
 </script>
 
 </body>
